@@ -18,7 +18,9 @@ package main
 
 import (
 	"flag"
+	v1 "github.com/togettoyou/sidecar-go/api/v1"
 	"os"
+	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	// to ensure that exec-entrypoint and run can make use of them.
@@ -96,10 +98,8 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "SidecarGo")
 		os.Exit(1)
 	}
-	if err = (&corev1.Pod{}).SetupWebhookWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create webhook", "webhook", "Pod")
-		os.Exit(1)
-	}
+	mgr.GetWebhookServer().Register("/mutate-core-v1-pod",
+		&webhook.Admission{Handler: v1.NewPodMutate(mgr.GetClient())})
 	//+kubebuilder:scaffold:builder
 
 	if err := mgr.AddHealthzCheck("healthz", healthz.Ping); err != nil {
