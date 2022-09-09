@@ -17,6 +17,7 @@ limitations under the License.
 package v1alpha1
 
 import (
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -28,7 +29,20 @@ type SidecarGoSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	Selector *metav1.LabelSelector `json:"selector,omitempty"`
+	Selector  *metav1.LabelSelector `json:"selector,omitempty"`
+	Namespace string                `json:"namespace,omitempty"`
+
+	// +kubebuilder:pruning:PreserveUnknownFields
+	// +kubebuilder:validation:Schemaless
+	InitContainers []corev1.Container `json:"initContainers,omitempty"`
+
+	// +kubebuilder:pruning:PreserveUnknownFields
+	// +kubebuilder:validation:Schemaless
+	Containers []corev1.Container `json:"containers,omitempty"`
+
+	// +kubebuilder:pruning:PreserveUnknownFields
+	// +kubebuilder:validation:Schemaless
+	Volumes []corev1.Volume `json:"volumes,omitempty"`
 }
 
 // SidecarGoStatus defines the observed state of SidecarGo

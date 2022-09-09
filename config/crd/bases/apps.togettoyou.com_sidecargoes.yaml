@@ -35,6 +35,12 @@ spec:
           spec:
             description: SidecarGoSpec defines the desired state of SidecarGo
             properties:
+              containers:
+                x-kubernetes-preserve-unknown-fields: true
+              initContainers:
+                x-kubernetes-preserve-unknown-fields: true
+              namespace:
+                type: string
               selector:
                 description: A label selector is a label query over a set of resources.
                   The result of matchLabels and matchExpressions are ANDed. An empty
@@ -83,6 +89,8 @@ spec:
                     type: object
                 type: object
                 x-kubernetes-map-type: atomic
+              volumes:
+                x-kubernetes-preserve-unknown-fields: true
             type: object
           status:
             description: SidecarGoStatus defines the observed state of SidecarGo
