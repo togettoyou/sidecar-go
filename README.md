@@ -22,5 +22,5 @@ $ operator-sdk create api --group apps --version v1alpha1 --kind SidecarGo --res
 
 ```shell
 $ operator-sdk create api --group core --version v1 --kind Pod --resource=false --controller=false
-$ operator-sdk create webhook --group core --version v1 --kind Pod --defaulting --programmatic-validation
+$ operator-sdk create webhook --group core --version v1 --kind Pod --defaulting
 ```
