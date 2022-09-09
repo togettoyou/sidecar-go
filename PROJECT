@@ -1,0 +1,9 @@
+domain: togettoyou.com
+layout:
+- go.kubebuilder.io/v3
+plugins:
+  manifests.sdk.operatorframework.io/v2: {}
+  scorecard.sdk.operatorframework.io/v2: {}
+projectName: sidecar-go
+repo: github.com/togettoyou/sidecar-go
+version: "3"
