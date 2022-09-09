@@ -1,0 +1,6 @@
+apiVersion: apps.togettoyou.com/v1alpha1
+kind: SidecarGo
+metadata:
+  name: sidecargo-sample
+spec:
+  # TODO(user): Add fields here
