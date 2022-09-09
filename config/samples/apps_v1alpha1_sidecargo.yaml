@@ -6,3 +6,17 @@ spec:
   selector:
     matchLabels:
       app: nginx
+  initContainers:
+    - name: init-container
+      image: busybox:1.28.4
+      command: [ "/bin/sh", "-c", "sleep 5 && echo 'init container success'" ]
+  containers:
+    - name: sidecar
+      image: busybox:1.28.4
+      command: [ "sleep", "3600" ]
+      volumeMounts:
+        - name: log-volume
+          mountPath: /var/log
+  volumes:
+    - name: log-volume
+      emptyDir: { }

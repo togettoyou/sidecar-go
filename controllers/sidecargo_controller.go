@@ -60,7 +60,7 @@ func (r *SidecarGoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		return ctrl.Result{}, err
 	}
 
-	logger.Info("SidecarGo apply", "Selector", sidecarGo.Spec.Selector.String())
+	logger.Info("SidecarGo apply", "Spec", sidecarGo.Spec)
 
 	return ctrl.Result{}, nil
 }
