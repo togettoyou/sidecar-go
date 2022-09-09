@@ -41,6 +41,7 @@ func NewPodMutate(c client.Client) admission.Handler {
 }
 
 func (pm *podMutate) Handle(ctx context.Context, req admission.Request) admission.Response {
+	podlog.Info("pod webhook")
 	pod := &corev1.Pod{}
 
 	err := pm.decoder.Decode(req, pod)
