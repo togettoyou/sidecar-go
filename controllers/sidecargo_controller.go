@@ -54,12 +54,13 @@ func (r *SidecarGoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	err := r.Get(ctx, req.NamespacedName, sidecarGo)
 	if err != nil {
 		if errors.IsNotFound(err) {
+			logger.Info("SidecarGo delete", "NamespacedName", req.NamespacedName.String())
 			return ctrl.Result{}, nil
 		}
 		return ctrl.Result{}, err
 	}
 
-	logger.Info("监控SidecarGo资源", "Selector", sidecarGo.Spec.Selector.String())
+	logger.Info("SidecarGo apply", "Selector", sidecarGo.Spec.Selector.String())
 
 	return ctrl.Result{}, nil
 }

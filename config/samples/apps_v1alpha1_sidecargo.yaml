@@ -3,4 +3,6 @@ kind: SidecarGo
 metadata:
   name: sidecargo-sample
 spec:
-  # TODO(user): Add fields here
+  selector:
+    matchLabels:
+      app: nginx
