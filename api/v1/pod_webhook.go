@@ -51,7 +51,21 @@ func (pm *podMutate) Handle(ctx context.Context, req admission.Request) admissio
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 
-	_ = util.PodMatchedSidecarGo(pod)
+	specs := util.PodMatchedSidecarGo(pod)
+	initContainers := make([]corev1.Container, 0)
+	containers := make([]corev1.Container, 0)
+	volumes := make([]corev1.Volume, 0)
+	for _, spec := range specs {
+		initContainers = append(initContainers, spec.InitContainers...)
+		containers = append(containers, spec.Containers...)
+		volumes = append(volumes, spec.Volumes...)
+	}
+	// 1.inject init containers
+	pod.Spec.InitContainers = append(pod.Spec.InitContainers, initContainers...)
+	// 2.inject containers
+	pod.Spec.Containers = util.MergeContainers(pod.Spec.Containers, containers)
+	// 3.inject volumes
+	pod.Spec.Volumes = util.MergeVolumes(pod.Spec.Volumes, volumes)
 
 	marshaledPod, err := json.Marshal(pod)
 	if err != nil {

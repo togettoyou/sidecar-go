@@ -1,11 +1,13 @@
 package util
 
 import (
+	"sync"
+
 	"github.com/togettoyou/sidecar-go/api/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
-	"sync"
+	"k8s.io/apimachinery/pkg/util/sets"
 )
 
 var (
@@ -59,4 +61,36 @@ func PodMatchedSidecarGo(pod *corev1.Pod) []*v1alpha1.SidecarGoSpec {
 	}
 
 	return specs
+}
+
+func MergeContainers(pods []corev1.Container, injectedContainers []corev1.Container) []corev1.Container {
+	containersInPod := make(map[string]int)
+	for index, container := range pods {
+		containersInPod[container.Name] = index
+	}
+	for _, sidecar := range injectedContainers {
+		if index, ok := containersInPod[sidecar.Name]; ok {
+			pods[index] = sidecar
+			continue
+		}
+		pods = append(pods, sidecar)
+	}
+	return pods
+}
+
+func MergeVolumes(original []corev1.Volume, additional []corev1.Volume) []corev1.Volume {
+	exists := sets.NewString()
+	for _, volume := range original {
+		exists.Insert(volume.Name)
+	}
+
+	for _, volume := range additional {
+		if exists.Has(volume.Name) {
+			continue
+		}
+		original = append(original, volume)
+		exists.Insert(volume.Name)
+	}
+
+	return original
 }
