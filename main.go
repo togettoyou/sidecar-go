@@ -18,8 +18,10 @@ package main
 
 import (
 	"flag"
-	v1 "github.com/togettoyou/sidecar-go/api/v1"
 	"os"
+
+	v1 "github.com/togettoyou/sidecar-go/api/v1"
+	"github.com/togettoyou/sidecar-go/pkg/cert"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
@@ -41,6 +43,7 @@ import (
 var (
 	scheme   = runtime.NewScheme()
 	setupLog = ctrl.Log.WithName("setup")
+	certDir  = "certs/"
 )
 
 func init() {
@@ -74,6 +77,7 @@ func main() {
 		HealthProbeBindAddress: probeAddr,
 		LeaderElection:         enableLeaderElection,
 		LeaderElectionID:       "af21d624.togettoyou.com",
+		CertDir:                certDir,
 		// LeaderElectionReleaseOnCancel defines if the leader should step down voluntarily
 		// when the Manager ends. This requires the binary to immediately end when the
 		// Manager is stopped, otherwise, this setting is unsafe. Setting this significantly
@@ -88,6 +92,19 @@ func main() {
 	})
 	if err != nil {
 		setupLog.Error(err, "unable to start manager")
+		os.Exit(1)
+	}
+
+	err = cert.Init(&cert.Manager{
+		Client:            mgr.GetClient(),
+		CertDir:           certDir,
+		WebhookURL:        "https://host.docker.internal:9443/mutate-core-v1-pod",
+		WebhookInjectPath: "/mutate-core-v1-pod",
+		ServiceName:       "sidecar-go-service",
+		Namespace:         "sidecar-go-system",
+	})
+	if err != nil {
+		setupLog.Error(err, "unable to init cert")
 		os.Exit(1)
 	}
 
