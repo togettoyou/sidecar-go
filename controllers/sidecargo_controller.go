@@ -18,6 +18,8 @@ package controllers
 
 import (
 	"context"
+
+	"github.com/togettoyou/sidecar-go/pkg/util"
 	"k8s.io/apimachinery/pkg/api/errors"
 
 	"k8s.io/apimachinery/pkg/runtime"
@@ -54,15 +56,14 @@ func (r *SidecarGoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	err := r.Get(ctx, req.NamespacedName, sidecarGo)
 	if err != nil {
 		if errors.IsNotFound(err) {
-			logger.Info("SidecarGo delete", "NamespacedName", req.NamespacedName.String())
-			return ctrl.Result{}, nil
+			logger.Info("SidecarGo delete")
+			return ctrl.Result{}, util.UpdateSidecarGoSpec(req.NamespacedName.String(), nil)
 		}
 		return ctrl.Result{}, err
 	}
 
-	logger.Info("SidecarGo apply", "Spec", sidecarGo.Spec)
-
-	return ctrl.Result{}, nil
+	logger.Info("SidecarGo apply")
+	return ctrl.Result{}, util.UpdateSidecarGoSpec(req.NamespacedName.String(), &sidecarGo.Spec)
 }
 
 // SetupWithManager sets up the controller with the Manager.

@@ -19,8 +19,10 @@ package v1
 import (
 	"context"
 	"encoding/json"
-	corev1 "k8s.io/api/core/v1"
 	"net/http"
+
+	"github.com/togettoyou/sidecar-go/pkg/util"
+	corev1 "k8s.io/api/core/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
@@ -49,10 +51,7 @@ func (pm *podMutate) Handle(ctx context.Context, req admission.Request) admissio
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 
-	if pod.Annotations == nil {
-		pod.Annotations = map[string]string{}
-	}
-	pod.Annotations["example-mutating-admission-webhook"] = "foo"
+	_ = util.PodMatchedSidecarGo(pod)
 
 	marshaledPod, err := json.Marshal(pod)
 	if err != nil {
