@@ -51,7 +51,10 @@ func (pm *podMutate) Handle(ctx context.Context, req admission.Request) admissio
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 
-	specs := util.PodMatchedSidecarGo(pod)
+	specs, ok := util.PodMatchedSidecarGo(pod)
+	if !ok {
+		return admission.Allowed("")
+	}
 	initContainers := make([]corev1.Container, 0)
 	containers := make([]corev1.Container, 0)
 	volumes := make([]corev1.Volume, 0)

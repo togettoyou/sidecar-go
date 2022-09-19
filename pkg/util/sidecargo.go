@@ -39,7 +39,7 @@ func UpdateSidecarGoSpec(namespacedName string, spec *v1alpha1.SidecarGoSpec) er
 	return nil
 }
 
-func PodMatchedSidecarGo(pod *corev1.Pod) []*v1alpha1.SidecarGoSpec {
+func PodMatchedSidecarGo(pod *corev1.Pod) ([]*v1alpha1.SidecarGoSpec, bool) {
 	sidecarGoSpecMu.RLock()
 	defer sidecarGoSpecMu.RUnlock()
 
@@ -59,8 +59,12 @@ func PodMatchedSidecarGo(pod *corev1.Pod) []*v1alpha1.SidecarGoSpec {
 			}
 		}
 	}
+	ok := false
+	if len(specs) > 0 {
+		ok = true
+	}
 
-	return specs
+	return specs, ok
 }
 
 func MergeContainers(pods []corev1.Container, injectedContainers []corev1.Container) []corev1.Container {
