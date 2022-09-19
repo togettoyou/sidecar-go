@@ -22,7 +22,7 @@ import (
 
 const (
 	_projectName           = "sidecar-go"
-	_webhookObjectMetaName = "sidecar-go-webhook-configuration"
+	_webhookObjectMetaName = "sidecar-go-mutating-webhook-configuration"
 	_webhookName           = "sidecar-go.togettoyou.com"
 )
 
@@ -188,9 +188,23 @@ func (m *Manager) createMutatingWebhookConfiguration(caPEM *bytes.Buffer) error 
 				},
 			},
 			FailurePolicy: func() *admissionregistrationv1.FailurePolicyType {
-				pt := admissionregistrationv1.Fail
+				pt := admissionregistrationv1.Ignore
 				return &pt
 			}(),
+			NamespaceSelector: &metav1.LabelSelector{
+				MatchExpressions: []metav1.LabelSelectorRequirement{
+					{
+						Key:      "kubernetes.io/metadata.name",
+						Operator: metav1.LabelSelectorOpNotIn,
+						Values: []string{
+							"kube-node-lease",
+							"kube-public",
+							"kube-system",
+							"sidecar-go-system",
+						},
+					},
+				},
+			},
 		}},
 	}
 

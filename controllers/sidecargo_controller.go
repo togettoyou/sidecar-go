@@ -36,6 +36,7 @@ type SidecarGoReconciler struct {
 	Scheme *runtime.Scheme
 }
 
+//+kubebuilder:rbac:groups=admissionregistration.k8s.io,resources=mutatingwebhookconfigurations,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=apps.togettoyou.com,resources=sidecargoes,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=apps.togettoyou.com,resources=sidecargoes/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=apps.togettoyou.com,resources=sidecargoes/finalizers,verbs=update

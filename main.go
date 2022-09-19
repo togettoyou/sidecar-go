@@ -98,10 +98,10 @@ func main() {
 	err = cert.Init(&cert.Manager{
 		Client:            mgr.GetClient(),
 		CertDir:           certDir,
-		WebhookURL:        "https://host.docker.internal:9443/mutate-core-v1-pod",
 		WebhookInjectPath: "/mutate-core-v1-pod",
 		ServiceName:       "sidecar-go-service",
 		Namespace:         "sidecar-go-system",
+		//WebhookURL:        "https://host.docker.internal:9443/mutate-core-v1-pod",
 	})
 	if err != nil {
 		setupLog.Error(err, "unable to init cert")
